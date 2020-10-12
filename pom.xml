@@ -32,9 +32,16 @@
     <hikaricp.version>3.4.2</hikaricp.version>
 <!--    mysql版本-->
     <mysql.version>5.1.34</mysql.version>
+<!--    servlet版本-->
+    <servlet.version>2.5</servlet.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
 
 <!--    spring-->
     <dependency>
@@ -80,12 +87,52 @@
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.34</version>
     </dependency>
+
+
+    <!--javaEE基本API-->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${servlet.version}</version>
+    </dependency>
+
+
+
+    <!-- 集成Pebble View -->
+    <dependency>
+      <groupId>io.pebbletemplates</groupId>
+      <artifactId>pebble-spring5</artifactId>
+      <version>${pebble.version}</version>
+    </dependency>
+
+
+    <!-- 使用logback -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>${logback.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
     <finalName>my-ssm</finalName>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
+        <plugin>
+          <groupId>org.mybatis.generator</groupId>
+          <artifactId>mybatis-generator-maven-plugin</artifactId>
+          <version>1.3.2</version>
+          <configuration>
+            <verbose>true</verbose>
+            <overwrite>true</overwrite>
+          </configuration>
+        </plugin>
+
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
@@ -117,5 +164,15 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>8</source>
+          <target>8</target>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>
