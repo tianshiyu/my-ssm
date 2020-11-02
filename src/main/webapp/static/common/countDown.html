@@ -1,0 +1,63 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>${title}</title>
+
+    <link href="/static/imgs/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
+
+    <style type="text/css">
+        <!--
+        .t {
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            color: #CC0000;
+        }
+        .c {
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            font-weight: normal;
+            color: #000000;
+            line-height: 18px;
+            text-align: center;
+            border: 1px solid #CCCCCC;
+            background-color: #FFFFEC;
+        }
+        body {
+            background-color: #FFFFFF;
+            margin-top: 100px;
+        }
+        -->
+    </style>
+</head>
+<body>
+<div align="center">
+    <h2><span class="t"><span id="count"></span>秒后跳转到登陆页面.......</span></h2>
+
+</div>
+
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script type="text/JavaScript">
+
+    var path = "";
+    $(function () {
+        var strFullPath = window.document.location.href;
+        var strPath = window.document.location.pathname;
+        var pos = strFullPath.indexOf(strPath);
+        var prePath = strFullPath.substring(0, pos);
+        var postPath = strPath.substring(0, strPath.substr(1).indexOf('/') + 1);
+        path = prePath+postPath;
+    });
+
+
+    var secs = 5; //倒计时的秒数
+    for (var i = secs; i >= 0; i--) {
+        window.setTimeout("doUpdate(" + i + ")", (secs - i) * 1000);
+    }
+    function doUpdate(num) {
+        document.getElementById("count").innerHTML = num;
+        if (num == 0) {
+            window.location = path + '/login.do';
+        }
+    }
+</script>
+</body>
+</html>

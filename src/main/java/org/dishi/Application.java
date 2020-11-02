@@ -103,11 +103,11 @@ public class Application {
     ViewResolver createViewResolver() {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/templates/");
-        viewResolver.setSuffix(".jsp");
+        viewResolver.setSuffix("");
         return viewResolver;
     }
     @Bean
-    @Order
+    @Order(1)
     ViewResolver createPebbleViewResolver(@Autowired ServletContext servletContext){
         PebbleEngine engine = new PebbleEngine.Builder().autoEscaping(true)
                 // cache:
