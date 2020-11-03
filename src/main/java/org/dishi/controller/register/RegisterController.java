@@ -2,6 +2,7 @@ package org.dishi.controller.register;
 
 import org.dishi.controller.BaseController;
 import org.dishi.entity.User;
+import org.dishi.message.MailMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -34,13 +35,15 @@ public class RegisterController extends BaseController {
         user.setRegtime(new Date());
 
         if(userService.register(user)==1) {
+            MailMessage mm = MailMessage.registration(email, name);
+            emailService.send(mm);
             return new ModelAndView("countDown.html");
         }
         return new ModelAndView("index.html");
     }
 
     @RequestMapping("/validateEmail.do")
-    public void validateEmail(String userEmail, PrintWriter writer) throws Exception {
+    public void validateEmail(String userEmail, PrintWriter writer){
         if (userService.validateEmailExist(userEmail)) {
             logger.info("邮箱已注册");
             writer.write("hasEmail");

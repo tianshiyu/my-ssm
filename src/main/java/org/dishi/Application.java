@@ -19,6 +19,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -33,12 +35,13 @@ import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 
 @EnableTransactionManagement
 @EnableWebMvc
 @Configuration
-@PropertySource("classpath:/jdbc.properties")
+@PropertySource(value = {"classpath:/jdbc.properties", "classpath:/smtp.properties"})
 @ComponentScan
 @MapperScan("org.dishi.dao")
 public class Application {
@@ -123,5 +126,41 @@ public class Application {
         viewResolver.setSuffix("");
         viewResolver.setPebbleEngine(engine);
         return viewResolver;
+    }
+
+
+    //email
+    @Bean
+    JavaMailSender createJavaMailSender(
+            // smtp.properties:
+            @Value("${smtp.host}") String host,
+            @Value("${smtp.port}") int port,
+            @Value("${smtp.auth:true}") String auth,
+            @Value("${smtp.username}") String username,
+            @Value("${smtp.password}") String password,
+            @Value("${smtp.debug:true}") String debug)
+    {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(host);
+        mailSender.setPort(port);
+        mailSender.setUsername(username);
+        mailSender.setPassword(password);
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        //进行授权认证，它的目的就是阻止他人任意乱发邮件
+        props.put("mail.smtp.auth", auth);
+        props.put("mail.smtp.timeout", 25000);
+        //SMTP加密方式:连接到一个TLS保护连接
+        props.put("mail.smtp.starttls.enable", "true");
+//        if (port == 587) {
+//        	//SMTP加密方式:连接到一个TLS保护连接
+//            props.put("mail.smtp.starttls.enable", "true");
+//        }
+//        if (port == 465) {
+//            props.put("mail.smtp.socketFactory.port", "465");
+//            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+//        }
+        props.put("mail.debug", debug);
+        return mailSender;
     }
 }

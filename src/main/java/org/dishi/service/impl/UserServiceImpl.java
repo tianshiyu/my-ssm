@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,22 +19,24 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
+    @Transactional
     public int register(User user) {
         return userMapper.insert(user);
     }
 
     @Override
+    @Transactional
     public int delete(Integer id) {
         return 0;
     }
 
     @Override
     public User select(Integer id) {
-
         return null;
     }
 
     @Override
+    @Transactional
     public int update(User record) {
         return 0;
     }
