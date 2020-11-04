@@ -1,4 +1,4 @@
-package org.dishi.controller.login;
+package org.dishi.controller.user.login;
 
 import org.dishi.controller.BaseController;
 import org.dishi.entity.User;

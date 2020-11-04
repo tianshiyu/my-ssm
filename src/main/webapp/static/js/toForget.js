@@ -28,14 +28,14 @@ $(function () {
         submitHandler: function (validator, form, submitButton) {
             var $email = $("#userEmail").val();
             $.ajax({
-                url: path + "/user/validateEmail.do",
+                url: path + "/validateEmail.do",
                 type: "post",
                 async: false,
                 data: {
                     "userEmail": $email
                 },
                 success: function (responseText) {
-                    if (responseText == "hasEmail") {
+                    if (responseText === "hasEmail") {
                         validator.defaultSubmit();
                         sweetAlert("请到您指定的邮箱完成重置密码操作");
                     } else {

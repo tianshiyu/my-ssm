@@ -7,6 +7,8 @@ public interface UserService {
 
     int delete(Integer id);
 
+    User select(String email);
+
     User select(Integer id);
 
     int update(User record);

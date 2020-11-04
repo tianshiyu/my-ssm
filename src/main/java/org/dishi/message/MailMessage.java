@@ -1,5 +1,7 @@
 package org.dishi.message;
 
+import org.dishi.entity.User;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,13 +28,14 @@ public class MailMessage {
 		return msg;
 	}
 
-	public static MailMessage forgetPWD(String email, String captcha){
+	public static MailMessage forgetPWD(User user, String url){
 		MailMessage msg = new MailMessage();
-		msg.email = email;
+		msg.email = user.getEmail();
 		msg.type = Type.FORGETPWD;
 		msg.timestamp = System.currentTimeMillis();
 		msg.data = new HashMap<>();
-		msg.data.put("captcha", captcha);
+		msg.data.put("name", user.getUsername());
+		msg.data.put("url", url);
 		return msg;
 	}
 }

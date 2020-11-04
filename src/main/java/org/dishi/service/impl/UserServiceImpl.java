@@ -31,14 +31,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User select(String email) {
+        return userMapper.validateEmail(email);
+    }
+
+    @Override
     public User select(Integer id) {
-        return null;
+        return userMapper.selectByPrimaryKey(id);
     }
 
     @Override
     @Transactional
     public int update(User record) {
-        return 0;
+        return userMapper.updateByPrimaryKey(record);
     }
 
     @Override

@@ -35,7 +35,7 @@ public class EmailServiceImpl implements EmailService {
                     break;
                 case FORGETPWD:
                     helper.setSubject("修改密码");
-                    html = String.format("<p>尊敬的用户,</p><p>验证码为：%s</p><p>Sent at %s</p>", mm.data.get("captcha"), LocalDateTime.now());
+                    html = String.format("<p>尊敬的%s,</p><p>链接为：%s</p><p>Sent at %s</p>", mm.data.get("name"),mm.data.get("url"), LocalDateTime.now());
                     break;
                 default:
                     throw new RuntimeException("邮件类型错误");

@@ -3,6 +3,7 @@ package org.dishi.controller;
 import org.dishi.entity.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -27,5 +28,10 @@ public class UtilController {
             resultMap.put("user", user);
         }
         return resultMap;
+    }
+
+    @RequestMapping("/countDown.do")
+    public ModelAndView cd(){
+        return new ModelAndView("countDown.html");
     }
 }

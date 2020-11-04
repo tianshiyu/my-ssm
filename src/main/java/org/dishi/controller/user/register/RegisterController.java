@@ -1,4 +1,4 @@
-package org.dishi.controller.register;
+package org.dishi.controller.user.register;
 
 import org.dishi.controller.BaseController;
 import org.dishi.entity.User;
@@ -9,11 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @Controller
 public class RegisterController extends BaseController {
