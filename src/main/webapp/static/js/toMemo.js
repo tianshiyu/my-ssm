@@ -6,9 +6,9 @@ $(function () {
         $(this).parent().addClass("active").siblings().removeClass();
 
         var attr = $(this).attr("name");
-        if (attr == "queryMemo") {
+        if (attr === "queryMemo") {
             $("#queryMemo").show().siblings().hide();
-        } else if (attr == "addMemo") {
+        } else if (attr === "addMemo") {
 
             //获取用户的邮箱
             var email = $("#userEmail").val();
@@ -24,25 +24,23 @@ $(function () {
 
 //查询所有备忘录的信息，并显示在页面上
 $(function () {
-    var userId = $("#userId").val();
     $.ajax({
-        url: path + "/memo/queryAllMemo.do",
-        type: "POST",
-        data: {userId: userId},
+        url: path + "/queryAllMemo.do",
+        type: "GET",
         success: function (responseText) {
 
-            if (responseText == "" || responseText == null || responseText.length == 0) {
+            if (responseText === "" || responseText == null || responseText.length === 0) {
                 $("#allMemo").html("您还没有任何的备忘录数据");
             } else {
 
                 //遍历数组，对返回的JSON作为备忘录添加到网页上
                 for (var i = 0; i < responseText.length; i++) {
                     var memoId = responseText[i].memoId;
-                    $("#allMemo").append("<tr><td>" + responseText[i].nickName + "</td><td>" + new Date(responseText[i].editTime).toLocaleString() + "</td><td>" + responseText[i].email + "</td><td>" + responseText[i].content + "</td><td>" + new Date(responseText[i].sendTime).toLocaleString() + "</td><td>" + responseText[i].state + "</td><td><button class='btn btn-primary' onclick='updCurrentMemo(this)' id=" + memoId + "  data-toggle='modal' data-target='#myModal'>修改</button>&nbsp;&nbsp;<a href='" + path + "/memo/deleteMemo.do?memoId=" + memoId + "'>删除</a></td>");
+                    $("#allMemo").append("<tr><td>" + responseText[i].nickName + "</td><td>" + new Date(responseText[i].createTime).toLocaleString() + "</td><td>" + responseText[i].email + "</td><td>" + responseText[i].content + "</td><td>" + new Date(responseText[i].sendTime).toLocaleString() + "</td><td>" + responseText[i].state + "</td><td><button class='btn btn-primary' onclick='updCurrentMemo(this)' id=" + memoId + "  data-toggle='modal' data-target='#myModal'>修改</button>&nbsp;&nbsp;<a href='" + path + "/memo/deleteMemo.do?mid=" + memoId + "'>删除</a></td>");
 
 
                     //如果是已发送状态的，那么设置不可用
-                    if (responseText[i].state == "已发送") {
+                    if (responseText[i].state === "已发送") {
                         $("#" + memoId + "").attr("disabled", "true");
 
                     }
@@ -105,10 +103,10 @@ $("#updateMemo").click(function () {
     $.ajax({
         url: path + "/memo/updateMemo.do",
         type: "post",
-        data: {memoId: memoId, memoContent: memoContent, sendTime: sendTime, userId: userId},
+        data: {mid: memoId, content: memoContent, sendtime: sendTime, uid: userId},
 
         success: function (responseText) {
-            if (responseText == "success") {
+            if (responseText.message === "success") {
                 sweetAlert("修改成功");
             } else {
                 sweetAlert("修改失败");

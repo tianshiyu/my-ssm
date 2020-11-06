@@ -27,7 +27,7 @@
         <javaClientGenerator type="XMLMAPPER" targetPackage="org.dishi.dao" targetProject="src/main/java"/>
 
         <!-- 为哪些表生成代码 tableName:表名 schema:不用填写 -->
-        <table schema="" tableName="user" enableCountByExample="false"
+        <table schema="" tableName="memo" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false"
         >

@@ -29,7 +29,7 @@ public class LoginController extends BaseController {
         return new ModelAndView("login.html");
     }
 
-    @GetMapping("logout.do")
+    @GetMapping("/logout.do")
     public ModelAndView logout(HttpSession session){
         session.removeAttribute("user");
         return new ModelAndView("index.html");

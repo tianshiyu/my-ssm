@@ -9,3 +9,15 @@ CREATE TABLE `user` (
   `regTime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+
+use my_ssm;
+CREATE TABLE `memo` (
+    `mid` int(11) NOT NULL AUTO_INCREMENT,
+    `content` text DEFAULT NULL,
+    `createTime` datetime DEFAULT NULL,
+    `sendTime` datetime DEFAULT NULL,
+    `uid` int(11),
+    `state` int(2),
+    PRIMARY KEY (`mid`),
+    CONSTRAINT fk_memo_user FOREIGN KEY (uid) REFERENCES user(id)
+)ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
