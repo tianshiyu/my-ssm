@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.dishi.dao.MemoMapper" >
+  <resultMap id="BaseResultMap" type="org.dishi.entity.Memo" >
+    <id column="mid" property="mid" jdbcType="INTEGER" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="sendTime" property="sendtime" jdbcType="TIMESTAMP" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="org.dishi.entity.Memo" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    mid, createTime, sendTime, uid, state
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from memo
+    where mid = #{mid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from memo
+    where mid = #{mid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.dishi.entity.Memo" >
+    insert into memo (mid, createTime, sendTime,
+      uid, state, content
+      )
+    values (#{mid,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, #{sendtime,jdbcType=TIMESTAMP},
+      #{uid,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.dishi.entity.Memo" useGeneratedKeys="true" keyProperty="mid" keyColumn="mid">
+    insert into memo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="mid != null" >
+        mid,
+      </if>
+      <if test="createtime != null" >
+        createTime,
+      </if>
+      <if test="sendtime != null" >
+        sendTime,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="mid != null" >
+        #{mid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendtime != null" >
+        #{sendtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.dishi.entity.Memo" >
+    update memo
+    <set >
+      <if test="createtime != null" >
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendtime != null" >
+        sendTime = #{sendtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where mid = #{mid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.dishi.entity.Memo" >
+    update memo
+    set createTime = #{createtime,jdbcType=TIMESTAMP},
+      sendTime = #{sendtime,jdbcType=TIMESTAMP},
+      uid = #{uid,jdbcType=INTEGER},
+      state = #{state,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where mid = #{mid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.dishi.entity.Memo" >
+    update memo
+    set createTime = #{createtime,jdbcType=TIMESTAMP},
+      sendTime = #{sendtime,jdbcType=TIMESTAMP},
+      uid = #{uid,jdbcType=INTEGER},
+      state = #{state,jdbcType=INTEGER}
+    where mid = #{mid,jdbcType=INTEGER}
+  </update>
+
+  <select id="queryAllMemo" resultMap="BaseResultMap" >
+    SELECT * from memo  where uid =#{uid} order by state ,createTime DESC;
+  </select>
+</mapper>
