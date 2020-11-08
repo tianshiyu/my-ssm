@@ -1,7 +1,9 @@
 package org.dishi.service.impl;
 
+import org.dishi.entity.Memo;
 import org.dishi.message.MailMessage;
 import org.dishi.service.EmailService;
+import org.dishi.service.MemoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,6 +18,8 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     JavaMailSender mailSender;
+    @Autowired
+    MemoService memoService;
 
     @Value("${smtp.from}")
     String from;
@@ -36,6 +40,17 @@ public class EmailServiceImpl implements EmailService {
                 case FORGETPWD:
                     helper.setSubject("修改密码");
                     html = String.format("<p>尊敬的%s,</p><p>链接为：%s</p><p>Sent at %s</p>", mm.data.get("name"),mm.data.get("url"), LocalDateTime.now());
+                    break;
+                case MEMO:
+                    helper.setSubject("备忘录");
+                    html = String.format("<p>尊敬的%s,</p><p>备忘录如下：%s</p><p>Sent at %s</p>", mm.data.get("name"),mm.data.get("content"), LocalDateTime.now());
+                    Memo memo = memoService.select(Integer.valueOf(mm.data.get("mid")));
+                    memo.setState(1);
+                    memoService.updateMemo(memo);
+                    break;
+                case LOGIN:
+                    helper.setSubject("登陆");
+                    html = String.format("<p>Hi, %s,</p><p>欢迎登陆</p><p>Sent at %s</p>", mm.name, LocalDateTime.now());
                     break;
                 default:
                     throw new RuntimeException("邮件类型错误");

@@ -70,7 +70,7 @@ function updCurrentMemo(currentMemo) {
     $("#memoContentManager").empty();
 
     //将其添加到模态框中
-    $("#memoContentManager").append("<tr><td><input type='text' id='memoContent' class='form-control' value='" + content + "'></td><td><input type='text' id='sendTime' value='" + sendTime + "'  readonly  class='form-control form_datetime '></td><input type='hidden' value='" + id + "' id='memoId'></tr>");
+    $("#memoContentManager").append("<tr><td><input type='text' id='content' class='form-control' value='" + content + "'></td><td><input type='text' id='sendtime' value='" + sendTime + "'  readonly  class='form-control form_datetime '></td><input type='hidden' value='" + id + "' id='mid'></tr>");
 
 
     $(".form_datetime").datetimepicker({

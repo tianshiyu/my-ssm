@@ -3,6 +3,9 @@ package org.dishi.controller.memo;
 import org.dishi.controller.BaseController;
 import org.dishi.entity.Memo;
 import org.dishi.entity.User;
+import org.dishi.message.MailMessage;
+import org.dishi.quartz.MemoJob;
+import org.dishi.quartz.QuartzManager;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -41,6 +44,8 @@ public class MemoController extends BaseController {
         memo.setState(0);
         memoService.addMemo(memo);
 
+        QuartzManager.addJob(scheduler, MemoJob.class, MailMessage.createMemo(memo, user), memo);
+
         System.out.println("发送时间："+memo.getSendtime());
 
         return new ModelAndView("redirect:memo.do");
@@ -78,13 +83,16 @@ public class MemoController extends BaseController {
 
     @PostMapping("/memo/updateMemo.do")
     @ResponseBody
-    public Map<String, String> updateMemo(Memo memo){
+    public Map<String, String> updateMemo(Memo memo, HttpSession session){
         Map<String, String> map = new HashMap<>();
         if(memoService.updateMemo(memo)>0){
             map.put("message", "success");
         }else {
             map.put("message", "failed");
         }
+        memo = memoService.select(memo.getMid());
+        User user = (User)  session.getAttribute("user");
+        QuartzManager.modifyJobTime(scheduler, MailMessage.createMemo(memo, user), memo);
         return map;
     }
 

@@ -12,4 +12,6 @@ public interface MemoService {
     Integer updateMemo(Memo memo);
 
     Integer addMemo(Memo memo);
+
+    Memo select(Integer mid);
 }

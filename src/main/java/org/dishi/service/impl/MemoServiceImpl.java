@@ -35,6 +35,11 @@ public class MemoServiceImpl implements MemoService {
     @Override
     @Transactional
     public Integer addMemo(Memo memo) {
-        return memoMapper.insert(memo);
+        return memoMapper.insertSelective(memo);
+    }
+
+    @Override
+    public Memo select(Integer mid) {
+        return memoMapper.selectByPrimaryKey(mid);
     }
 }

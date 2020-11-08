@@ -2,6 +2,7 @@ package org.dishi.controller.user.login;
 
 import org.dishi.controller.BaseController;
 import org.dishi.entity.User;
+import org.dishi.message.MailMessage;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;

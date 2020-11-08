@@ -8,19 +8,34 @@ import com.mitchellbosecke.pebble.spring.extension.SpringExtension;
 import com.mitchellbosecke.pebble.spring.servlet.PebbleViewResolver;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
+import org.quartz.Scheduler;
+import org.quartz.spi.JobFactory;
+import org.quartz.spi.TriggerFiredBundle;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jms.annotation.EnableJms;
+import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.scheduling.quartz.AdaptableJobFactory;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -31,6 +46,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import javax.jms.ConnectionFactory;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 import java.io.File;
@@ -38,6 +54,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 
+//@EnableJms
 @EnableTransactionManagement
 @EnableWebMvc
 @Configuration
@@ -163,4 +180,96 @@ public class Application {
         props.put("mail.debug", debug);
         return mailSender;
     }
+
+    //quartz
+    //解决属性不能注入的问题
+    /**
+     * 继承org.springframework.scheduling.quartz.SpringBeanJobFactory
+     * 实现任务实例化方式
+     */
+    public static class AutowiringSpringBeanJobFactory extends SpringBeanJobFactory implements
+            ApplicationContextAware {
+        private transient AutowireCapableBeanFactory beanFactory;
+        @Override
+        public void setApplicationContext(final ApplicationContext context) {
+            beanFactory = context.getAutowireCapableBeanFactory();
+        }
+        /**
+         * 将job实例交给spring ioc托管
+         * 我们在job实例实现类内可以直接使用spring注入的调用被spring ioc管理的实例
+         * @param bundle
+         * @return
+         * @throws Exception
+         */
+        @Override
+        protected Object createJobInstance(final TriggerFiredBundle bundle) throws Exception {
+            final Object job = super.createJobInstance(bundle);
+            /**
+             * 将job实例交付给spring ioc
+             */
+            beanFactory.autowireBean(job);
+            return job;
+        }
+    }
+    /**
+     * 配置任务工厂实例
+     * @param applicationContext spring上下文实例
+     * @return
+     */
+    @Bean
+    public JobFactory jobFactory(ApplicationContext applicationContext)
+    {
+        /**
+         * 采用自定义任务工厂 整合spring实例来完成构建任务
+         * see {@link AutowiringSpringBeanJobFactory}
+         */
+        AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
+        jobFactory.setApplicationContext(applicationContext);
+        return jobFactory;
+    }
+    /**
+     * 配置任务调度器
+     * 使用项目数据源作为quartz数据源
+     * @param jobFactory 自定义配置任务工厂(其实就是AutowiringSpringBeanJobFactory)
+     * @param dataSource 数据源实例
+     * @return
+     * @throws Exception
+     */
+    @Bean(destroyMethod = "destroy",autowire = Autowire.NO)
+    public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory, DataSource dataSource) throws Exception
+    {
+        SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
+        //将spring管理job自定义工厂交由调度器维护
+        schedulerFactoryBean.setJobFactory(jobFactory);
+        //设置覆盖已存在的任务
+        schedulerFactoryBean.setOverwriteExistingJobs(true);
+        //项目启动完成后，等待2秒后开始执行调度器初始化
+        schedulerFactoryBean.setStartupDelay(2);
+        //设置调度器自动运行
+        schedulerFactoryBean.setAutoStartup(true);
+//        //设置数据源，使用与项目统一数据源
+//        schedulerFactoryBean.setDataSource(dataSource);
+        //设置上下文spring bean name
+        schedulerFactoryBean.setApplicationContextSchedulerContextKey("applicationContext");
+//        //设置配置文件位置
+//        schedulerFactoryBean.setConfigLocation(new ClassPathResource("/quartz.properties"));
+        return schedulerFactoryBean;
+    }
+
+//    //jms
+//    @Bean
+//    public ConnectionFactory createJmsConnFactory(@Value("${jms.uri}") String uri, @Value("jms.username") String username,
+//                                                  @Value("${jms.password}") String password){
+//        return new ActiveMQJMSConnectionFactory(uri, username, password);
+//    }
+//    @Bean
+//    public JmsTemplate createJmsTemplate(@Autowired ConnectionFactory conn){
+//        return new JmsTemplate(conn);
+//    }
+//    @Bean
+//    public DefaultJmsListenerContainerFactory createJmsListenerContainerFactory(@Autowired ConnectionFactory connectionFactory){
+//        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+//        factory.setConnectionFactory(connectionFactory);
+//        return factory;
+//    }
 }
