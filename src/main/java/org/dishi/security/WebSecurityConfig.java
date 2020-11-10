@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.UUID;
 
 @EnableWebSecurity
 @Configuration
@@ -46,6 +47,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     EmailCodeAuthenticationSecurityConfig emailCodeAuthenticationSecurityConfig;
+
+    @Autowired
+    PersistentTokenRepository persistentTokenRepository;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -132,14 +136,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
 
-//                //记住我功能
-//                .rememberMe()
-//                .tokenRepository(persistentTokenRepository())
-//                //设置Token的有效时间
-//                .tokenValiditySeconds(3600)
-//                //使用userDetailsService用Token从数据库中获取用户自动登录
+                //记住我功能
+                .rememberMe()
+//                .tokenRepository(persistentTokenRepository)
+                //设置Token的有效时间
+                .rememberMeServices(emailCodeAuthenticationSecurityConfig.getRememberMeServices())
+                //使用userDetailsService用Token从数据库中获取用户自动登录
 //                .userDetailsService(roleService)
-//                .and()
+                .and()
 
 
                 //对应了注销相关的配置
@@ -180,13 +184,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        return new AuthenticationAccessDeniedHandler();
 //    }
 
-//    //记住我功能与数据库交互
-//    @Bean
-//    public PersistentTokenRepository persistentTokenRepository() {
-//        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
-//        tokenRepository.setDataSource(dataSource);
-//        //系统在启动的时候生成“记住我”的数据表（只能使用一次）
-////        tokenRepository.setCreateTableOnStartup(true);
-//        return tokenRepository;
-//    }
+
 }

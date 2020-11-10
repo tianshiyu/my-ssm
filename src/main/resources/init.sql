@@ -54,6 +54,9 @@ create TABLE IF NOT EXISTS `roles_user`
 insert into roles (id, name) values (1, '管理员');
 insert into roles (id, name) values (2, '用户');
 
+truncate persistent_logins;
+show tables ;
+select * from persistent_logins;
 select * from roles;
 select * from user;
 select * from roles_user;
