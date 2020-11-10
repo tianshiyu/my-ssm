@@ -31,7 +31,7 @@ public class RegisterController extends BaseController {
         user.setUsername(name);
         user.setRegtime(new Date());
 
-        if(userService.register(user)==1) {
+        if(userService.register(user)!=null) {
             MailMessage mm = MailMessage.registration(email, name);
             emailService.send(mm);
             return new ModelAndView("countDown.html");

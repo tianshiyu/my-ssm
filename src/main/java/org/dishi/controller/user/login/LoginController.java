@@ -3,6 +3,8 @@ package org.dishi.controller.user.login;
 import org.dishi.controller.BaseController;
 import org.dishi.entity.User;
 import org.dishi.message.MailMessage;
+import org.dishi.utils.UserUtil;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,10 +21,10 @@ public class LoginController extends BaseController {
     }
 
     @PostMapping(value = {"/login.do"})
-    public ModelAndView doLogin(@RequestParam String userEmail, @RequestParam String userPassword,
+    public ModelAndView doLogin(@RequestParam String email, @RequestParam String password,
                                 @RequestParam String captcha, HttpSession session){
 
-        User user = userService.login(userEmail, userPassword);
+        User user = userService.login(email, password);
         if(user!=null){
             session.setAttribute("user", user);
             return new ModelAndView("index.html");
@@ -38,13 +40,19 @@ public class LoginController extends BaseController {
 
     @RequestMapping("/getUser.do")
     @ResponseBody
-    public Map<String, Object> getUser(HttpSession session) {
+    public Map<String, Object> getUser() {
 
         Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        User user = (User) session.getAttribute("user");
+        User user = UserUtil.getUserFromSession();
         if (user != null) {
             resultMap.put("user", user);
         }
         return resultMap;
+    }
+
+    @GetMapping("/loginFailed.do")
+    @ResponseBody
+    public String loginFailed(){
+        return "loginFailed";
     }
 }

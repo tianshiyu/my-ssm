@@ -1,8 +1,16 @@
 package org.dishi.entity;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-public class User {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+public class User{
     private Integer id;
 
     private String username;
@@ -12,6 +20,17 @@ public class User {
     private String email;
 
     private Date regtime;
+
+    public User() {
+    }
+
+    public User(Integer id, String username, String password, String email, Date regtime) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.regtime = regtime;
+    }
 
     public Integer getId() {
         return id;

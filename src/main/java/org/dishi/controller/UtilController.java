@@ -1,6 +1,7 @@
 package org.dishi.controller;
 
 import org.dishi.entity.User;
+import org.dishi.utils.UserUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +21,10 @@ public class UtilController {
 
     @GetMapping("/getUser.do")
     @ResponseBody
-    public Map<String, Object> getUser(HttpSession session) {
+    public Map<String, Object> getUser() {
 
         Map<String, Object> resultMap = new LinkedHashMap<>();
-        User user = (User) session.getAttribute("user");
+        User user = UserUtil.getUserFromSession();
         if (user != null) {
             resultMap.put("user", user);
         }

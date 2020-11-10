@@ -6,6 +6,7 @@ import org.dishi.entity.User;
 import org.dishi.message.MailMessage;
 import org.dishi.quartz.MemoJob;
 import org.dishi.quartz.QuartzManager;
+import org.dishi.utils.UserUtil;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -37,8 +38,8 @@ public class MemoController extends BaseController {
     }
 
     @PostMapping("/saveMemo.do")
-    public ModelAndView saveMemo(Memo memo, HttpSession session){
-        User user = (User) session.getAttribute("user");
+    public ModelAndView saveMemo(Memo memo){
+        User user = UserUtil.getUserFromSession();
         memo.setCreatetime(new Date());
         memo.setUid(user.getId());
         memo.setState(0);
@@ -53,8 +54,8 @@ public class MemoController extends BaseController {
 
     @GetMapping("/queryAllMemo.do")
     @ResponseBody
-    public List<Map<String, Object>> queryAllMemo(HttpSession session){
-        User user = (User) session.getAttribute("user");
+    public List<Map<String, Object>> queryAllMemo(){
+        User user = UserUtil.getUserFromSession();
         List<Memo> memoList = memoService.queryAllMemo(user.getId());
 
         List<Map<String, Object>> mapList = new ArrayList<>();
@@ -83,7 +84,7 @@ public class MemoController extends BaseController {
 
     @PostMapping("/memo/updateMemo.do")
     @ResponseBody
-    public Map<String, String> updateMemo(Memo memo, HttpSession session){
+    public Map<String, String> updateMemo(Memo memo){
         Map<String, String> map = new HashMap<>();
         if(memoService.updateMemo(memo)>0){
             map.put("message", "success");
@@ -91,7 +92,7 @@ public class MemoController extends BaseController {
             map.put("message", "failed");
         }
         memo = memoService.select(memo.getMid());
-        User user = (User)  session.getAttribute("user");
+        User user = UserUtil.getUserFromSession();
         QuartzManager.modifyJobTime(scheduler, MailMessage.createMemo(memo, user), memo);
         return map;
     }

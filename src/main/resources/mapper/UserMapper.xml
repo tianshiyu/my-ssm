@@ -22,7 +22,7 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
 
-  <insert id="insert" parameterType="org.dishi.entity.User">
+  <insert id="insert" parameterType="org.dishi.entity.User" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     insert into user (id, username, password, 
       email, regTime)
     values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 

@@ -1,9 +1,12 @@
 package org.dishi.service;
 
+import org.dishi.entity.Role;
 import org.dishi.entity.User;
 
+import java.util.List;
+
 public interface UserService {
-    int register(User user);
+    User register(User user);
 
     int delete(Integer id);
 
@@ -16,4 +19,6 @@ public interface UserService {
     boolean validateEmailExist(String userEmail);
 
     User login(String email, String password);
+
+    List<Role> queryRoles(Integer uid);
 }

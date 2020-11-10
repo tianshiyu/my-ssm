@@ -1,13 +1,18 @@
 package org.dishi.service.impl;
 
+import org.dishi.dao.RoleMapper;
 import org.dishi.dao.UserMapper;
+import org.dishi.entity.Role;
 import org.dishi.entity.User;
 import org.dishi.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,10 +23,20 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    RoleMapper roleMapper;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Override
     @Transactional
-    public int register(User user) {
-        return userMapper.insert(user);
+    public User register(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userMapper.insert(user);
+        System.out.println("userid:"+user.getId());
+        roleMapper.addRole(2, user.getId());
+        return user;
     }
 
     @Override
@@ -62,5 +77,10 @@ public class UserServiceImpl implements UserService {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<Role> queryRoles(Integer uid){
+        return roleMapper.getRolesByUid(uid);
     }
 }
