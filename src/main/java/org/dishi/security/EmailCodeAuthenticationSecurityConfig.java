@@ -46,7 +46,7 @@ public class EmailCodeAuthenticationSecurityConfig extends SecurityConfigurerAda
     @PostConstruct
     public void init(){
         rememberMeServices = new MyRememberMeServices(UUID.randomUUID().toString(), roleService, persistentTokenRepository);
-        rememberMeServices.setTokenValiditySeconds(60*60);
+        rememberMeServices.setTokenValiditySeconds(60*60*24*10);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class EmailCodeAuthenticationSecurityConfig extends SecurityConfigurerAda
         filter.setAuthenticationFailureHandler(myAuthenticationFailHandler);
         filter.setRememberMeServices(rememberMeServices);
 
-        EmailCodeAuthentictionProvider provider = new EmailCodeAuthentictionProvider(userService, passwordEncoder) ;
+        EmailCodeAuthenticationProvider provider = new EmailCodeAuthenticationProvider(userService, passwordEncoder) ;
         http
                 .authenticationProvider(provider)
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);

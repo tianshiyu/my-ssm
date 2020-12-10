@@ -18,15 +18,13 @@ public class MemoJob implements Job {
     @Autowired
     private EmailService emailService;
 
-
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
         try {
-
             // 让Spring可以把成员变量注入进来。使用了这种方式后，就不能使用setter方法获取传递进来的参数了。
             // 因此下面使用getJobDataMap方式获取
-            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+//            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
             Map<String, Object> wrappedMap = jobExecutionContext.getJobDetail().getJobDataMap().getWrappedMap();
             MailMessage memo = (MailMessage) wrappedMap.get("memo");
 

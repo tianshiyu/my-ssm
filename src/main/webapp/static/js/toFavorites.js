@@ -6,12 +6,12 @@ function addSiteFunc() {
         data: $("#siteForm").serialize(),
         success: function (responseText) {
             console.log(responseText);
-            if (responseText == "success") {
+            if (responseText.message === "success") {
                 sweetAlert("添加网站成功，请继续添加");
                 //将输入框的内容清空
                 $("#inputSiteAddr").val("");
                 $("#inputSiteName").val("");
-            } else if (responseText == "hasWebSiteName") {
+            } else if (responseText.message === "hasWebSiteName") {
                 sweetAlert("命名已存在，请换别的命名");
                 $("#inputSiteName").val("");
             } else {
@@ -241,40 +241,28 @@ function searchSite() {
 $(function () {
     $("#queryById").click(function () {
         var currentPage = $("#currentPage").val();
-        if (currentPage == null || currentPage == "") {
+        if (currentPage == null || currentPage === "") {
             currentPage = 1;
         }
         $.ajax({
             url: path + "/favorites/querySiteById.do",
             type: "post",
-            data: {userId: $("#userId").val(), currentPage: currentPage},
+            data: {currentPage: currentPage},
 
             success: function (responseText) {
 
+                var siteList = responseText.sites;
+                var p = responseText.p;
                 //返回的是一个Map集合，我们遍历Map集合，
-                for (var index in responseText) {
+                for (var i=0; i < siteList.length; i++) {
 
                     //获取Map的value，index就代表Map的key
-                    var jsonObj = responseText[index]
+                    var data = siteList[i];
 
-                    if (index.length > 16) {
+                    $("#manageSiteContent").before("<tr><td><input type='text' value=" + data.site + " /></td><td><input type='text' value=" + data.name + " /></td><td><a href=" + path + "/favorites/deleteSiteById.do?id=" + data.id + ">删除</a></td></tr>");
 
-                        //获取JSON对象
-                        var data = eval("(" + jsonObj + ")");
-
-                        $("#manageSiteContent").before("<tr><td><input type='text' value=" + data.webSiteAddr + " /></td><td><input type='text' value=" + data.webSiteName + " /></td><td><a href=" + path + "/favorites/deleteSiteById.do?indexId=" + index + ">删除</a></td></tr>");
-
-                    } else {
-                        if (index == "currentPage") {
-                            $("#currentPage").val(jsonObj);
-                        } else if (index == "totalPageCount") {
-                            $("#totalPageCount").val(jsonObj);
-                        } else {
-                            $("#totalRecordCount").val(jsonObj);
-                        }
-                    }
                 }
-                createPage($("#totalPageCount").val());
+                createPage(p.pages);
             },
             error: function () {
                 sweetAlert("系统错误了");
@@ -314,34 +302,21 @@ function queryPage(currentPage) {
     $.ajax({
         url: path + "/favorites/querySiteById.do",
         type: "post",
-        data: {userId: $("#userId").val(), currentPage: currentPage},
+        data: {currentPage: currentPage},
 
         success: function (responseText) {
 
+            var siteList = responseText.sites;
+            var p = responseText.p;
             //返回的是一个Map集合，我们遍历Map集合，
-            for (var index in responseText) {
+            for (var i=0; i < siteList.length; i++) {
 
                 //获取Map的value，index就代表Map的key
-                var jsonObj = responseText[index]
+                var data = siteList[i];
 
-                if (index.length > 16) {
+                $("#manageSiteContent").before("<tr><td><input type='text' value=" + data.site + " /></td><td><input type='text' value=" + data.name + " /></td><td><a href=" + path + "/favorites/deleteSiteById.do?id=" + data.id + ">删除</a></td></tr>");
 
-                    //获取JSON对象
-                    var data = eval("(" + jsonObj + ")");
-
-                    $("#manageSiteContent").before("<tr><td><input type='text' value=" + data.webSiteAddr + " /></td><td><input type='text' value=" + data.webSiteName + " /></td><td><a href='${request.contextPath}/favorites/deleteSiteById.do?indexId=" + index + "'>删除</a></td></tr>");
-
-                } else {
-                    if (index == "currentPage") {
-                        $("#currentPage").val(jsonObj);
-                    } else if (index == "totalPageCount") {
-                        $("#totalPageCount").val(jsonObj);
-                    } else {
-                        $("#totalRecordCount").val(jsonObj);
-                    }
-                }
             }
-
         },
         error: function () {
             sweetAlert("系统错误了");

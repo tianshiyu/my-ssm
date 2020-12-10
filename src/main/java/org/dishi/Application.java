@@ -2,6 +2,7 @@ package org.dishi;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageInterceptor;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.loader.ServletLoader;
 import com.mitchellbosecke.pebble.spring.extension.SpringExtension;
@@ -9,12 +10,11 @@ import com.mitchellbosecke.pebble.spring.servlet.PebbleViewResolver;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory;
+import org.apache.ibatis.plugin.Interceptor;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.quartz.Scheduler;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -99,10 +99,16 @@ public class Application {
 
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:mapper/*.xml"));
+
+        //pageHelper分页配置（只参考这部分配置就可以了）
+        PageInterceptor pageInterceptor = new PageInterceptor();
+        Properties properties=new Properties();
+        //下面这行代码可以不配置，因为在源码中会默认给properties进行如下配置
+        /* properties.put("dialect", "com.github.pagehelper.PageHelper");*/
+        pageInterceptor.setProperties(properties);
+        sqlSessionFactoryBean.setPlugins(pageInterceptor);
         return sqlSessionFactoryBean;
     }
-
-
     //WebMVC
     @Bean
     WebMvcConfigurer createWebMvc(@Autowired HandlerInterceptor[] interceptors){
@@ -238,8 +244,8 @@ public class Application {
      * @return
      * @throws Exception
      */
-    @Bean(destroyMethod = "destroy",autowire = Autowire.NO)
-    public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory, DataSource dataSource) throws Exception
+    @Bean(destroyMethod = "destroy")
+    public SchedulerFactoryBean schedulerFactoryBean(@Autowired JobFactory jobFactory, DataSource dataSource) throws Exception
     {
         SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
         //将spring管理job自定义工厂交由调度器维护
@@ -273,6 +279,16 @@ public class Application {
 //        tokenRepository.setCreateTableOnStartup(true);
         return tokenRepository;
     }
+
+//    //分页插件
+//    @Bean
+//    public PageInterceptor getPageInterceptor(){
+//        PageInterceptor pageInterceptor=new PageInterceptor();
+//        Properties properties=new Properties();
+//        properties.setProperty("value", "true");
+//        pageInterceptor.setProperties(properties);
+//        return pageInterceptor;
+//    }
 
 //    //jms
 //    @Bean

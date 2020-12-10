@@ -18,7 +18,7 @@ import java.util.Date;
 
 public class MyRememberMeServices extends AbstractRememberMeServices {
 
-    private PersistentTokenRepository tokenRepository = new InMemoryTokenRepositoryImpl();
+    private PersistentTokenRepository tokenRepository;
     private SecureRandom random;
 
     private Logger logger = LoggerFactory.getLogger(getClass());

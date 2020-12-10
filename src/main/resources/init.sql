@@ -50,14 +50,28 @@ create TABLE IF NOT EXISTS `roles_user`
 )ENGINE = InnoDB
  AUTO_INCREMENT = 21
  DEFAULT CHARSET = utf8;
+drop table favorite;
+create TABLE IF NOT EXISTS `favorite`
+(
+    id int(11) NOT NULL AUTO_INCREMENT,
+    `site` varchar(255) NOT NULL ,
+    `name` varchar(32) NOT NULL unique ,
+    `uid` int DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT fk_f_u FOREIGN KEY (uid) REFERENCES user (id)
+)ENGINE = InnoDB
+ AUTO_INCREMENT = 21
+ DEFAULT CHARSET = utf8;
 
 insert into roles (id, name) values (1, '管理员');
 insert into roles (id, name) values (2, '用户');
 
 truncate persistent_logins;
+truncate favorite;
 show tables ;
 select * from persistent_logins;
 select * from roles;
+select * from favorite;
 select * from user;
 select * from roles_user;
 

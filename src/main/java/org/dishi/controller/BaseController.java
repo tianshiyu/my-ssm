@@ -4,6 +4,7 @@ import org.dishi.service.EmailService;
 import org.dishi.service.MemoService;
 import org.dishi.service.UserService;
 import org.quartz.Scheduler;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -20,4 +21,7 @@ public class BaseController {
 
     @Autowired
     protected Scheduler scheduler;
+
+    @Autowired
+    protected RabbitTemplate rabbitTemplate;
 }

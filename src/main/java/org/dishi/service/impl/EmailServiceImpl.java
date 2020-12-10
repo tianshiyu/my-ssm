@@ -25,7 +25,7 @@ public class EmailServiceImpl implements EmailService {
     String from;
 
     @Override
-    public void send(MailMessage mm) {
+    public void send(MailMessage mm){
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");

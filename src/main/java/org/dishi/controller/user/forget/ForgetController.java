@@ -27,7 +27,8 @@ public class ForgetController extends BaseController {
         }
         //提示用户发送了邮件，让用户重新设置密码账户
         String url = "http://localhost:8080/reset.do?userId=" + user.getId();
-        emailService.send(MailMessage.forgetPWD(user, url));
+        rabbitTemplate.convertAndSend("email_exchange", "email_key", MailMessage.forgetPWD(user, url));
+//        emailService.send(MailMessage.forgetPWD(user, url));
         return new ModelAndView("countDown.html");
     }
 

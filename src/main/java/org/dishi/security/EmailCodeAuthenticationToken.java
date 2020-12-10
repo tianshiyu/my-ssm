@@ -42,7 +42,6 @@ public class EmailCodeAuthenticationToken extends AbstractAuthenticationToken {
 第一次 使用token 是未认证的 principal 里存放的是用户名
 第二次 是认证的 该token 里面 还存放了 该用户的权限
 springsecurity 通过这个标志来判断 是否被认证
-
      */
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
         if (isAuthenticated) {
@@ -51,7 +50,6 @@ springsecurity 通过这个标志来判断 是否被认证
             super.setAuthenticated(false);
         }
     }
-
 
 
     /********************父类抽象方法***************************/

@@ -16,24 +16,21 @@ public class QuartzManager {
 
 
     /**
-     * @param sched    调度器
+     * @param scheduler    调度器
      * @param jobClass 任务
      * @Description: 添加一个定时任务
      * @Title: QuartzManager.java
      */
-    public static void addJob(Scheduler sched, Class<? extends Job> jobClass, MailMessage memoMail, Memo memo) {
+    public static void addJob(Scheduler scheduler, Class<? extends Job> jobClass, MailMessage memoMail, Memo memo) {
 
         //装载着参数
         Map<String, Object> map = new HashMap<>();
-
         map.put("memo", memoMail);
-
         try {
             JobDetail jobDetail = JobBuilder
                     .newJob(jobClass)
                     .withIdentity(String.valueOf(memo.getMid()), JOB_GROUP_NAME)
                     .usingJobData(new JobDataMap(map)).build();// 任务名，任务组，任务执行类
-
             // 触发器
             CronTrigger trigger = TriggerBuilder
                     .newTrigger()
@@ -41,10 +38,9 @@ public class QuartzManager {
                     .withSchedule(
                             CronScheduleBuilder.cronSchedule(Date2Cron.getCron(memo.getSendtime())))
                     .build();
-
             //绑定任务和触发器，开始执行
-            sched.scheduleJob(jobDetail, trigger);
-            sched.start();
+            scheduler.scheduleJob(jobDetail, trigger);
+            scheduler.start();
 
         } catch (Exception e) {
             throw new RuntimeException(e);

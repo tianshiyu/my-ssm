@@ -17,14 +17,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
-public class EmailCodeAuthentictionProvider implements AuthenticationProvider {
+public class EmailCodeAuthenticationProvider implements AuthenticationProvider {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     UserService userService;
     PasswordEncoder passwordEncoder;
 
-    public EmailCodeAuthentictionProvider(UserService userService, PasswordEncoder passwordEncoder) {
+    public EmailCodeAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
